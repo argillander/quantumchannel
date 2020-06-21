@@ -8,10 +8,11 @@ public class LosslessQuantumChannel implements Channel
         this.recipients = new ArrayList<>();
     }
 
-    @Override public void send(final Qubit qb) {
+    @Override public PolarizationQubit send(final PolarizationQubit qb) {
         for (ChannelRecipient cr : this.recipients){
             cr.receiveQubit(qb);
 	}
+        return qb;
     }
 
     @Override public void addRecipient(final ChannelRecipient p) {

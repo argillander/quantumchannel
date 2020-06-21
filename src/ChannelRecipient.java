@@ -1,4 +1,4 @@
 public interface ChannelRecipient
 {
-    void receiveQubit(Qubit qb);
+    PolarizationQubit receiveQubit(PolarizationQubit qb);
 }

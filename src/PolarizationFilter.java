@@ -5,6 +5,14 @@ public class PolarizationFilter
     FilterSetting s;
     Random r = new Random();
 
+    public PolarizationFilter(final FilterSetting s) {
+	this.s = s;
+    }
+
+    public void setFilterSetting(final FilterSetting s) {
+	this.s = s;
+    }
+
     PolarizationQubit randomizePolarization(PolarizationQubit qb){
         if(s == FilterSetting.HV){
             if(r.nextBoolean()){
