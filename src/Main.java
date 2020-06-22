@@ -17,6 +17,13 @@ public class Main
         a.sendClassical(new Message(ClassicalMessageType.DEBUG, "Hello Bob!"));
         b.sendClassical(new Message(ClassicalMessageType.DEBUG, "Hello Alice!"));
 
+
+        a.doQubitExchange();
+        a.siftQubits();
+
+        a.printFinalKey();
+        b.printFinalKey();
+
         //for (int i = 0; i < 5; i++) {
           //a.sendOneQubit();
        // }

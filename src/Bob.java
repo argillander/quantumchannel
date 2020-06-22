@@ -1,62 +1,80 @@
+import javax.sound.sampled.AudioFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Bob implements QuantumChannelRecipient, ClassicalChannelRecipient
 {
 
-    FilterSetting[] basis; // = {FilterSetting.HV, FilterSetting.PM, FilterSetting.PM, FilterSetting.HV, FilterSetting.PM };
+    FilterSetting[] basisSelection; // = {FilterSetting.HV, FilterSetting.PM, FilterSetting.PM, FilterSetting.HV, FilterSetting.PM };
     int basisPointer = 0;
     Random rand;
-    int n_bits = 0;
+    int nBits = 0;
     ClassicalChannel classicalChannel;
     QuantumChannel quantumChannel;
 
-    public Bob(final int n_bits, final QuantumChannel quantumChannel, final ClassicalChannel classicalChannel) {
-	this.n_bits = n_bits;
+    ArrayList<Integer> rawKey;
+
+    public Bob(final int nBits, final QuantumChannel quantumChannel, final ClassicalChannel classicalChannel) {
+	this.nBits = nBits;
 	this.classicalChannel = classicalChannel;
 	this.quantumChannel = quantumChannel;
 	this.rand = new Random();
-	basis = new FilterSetting[n_bits];
-	selectBases();
+	this.basisSelection = PolarizationUtil.getRandomBasisSelection(nBits);
+	this.rawKey = new ArrayList<>();
     }
 
     @Override public PolarizationQubit receiveQubit(final PolarizationQubit qb) {
         PolarizationQubit recv;
-        PolarizationFilter pf = new PolarizationFilter(basis[basisPointer]);
-        basisPointer++;
+        PolarizationFilter pf = new PolarizationFilter(basisSelection[basisPointer]);
+	recv = pf.filterQubit(qb);
+	this.rawKey.add(EncodingScheme.decodeQubit(recv));
 
-        recv = pf.filterQubit(qb);
 	System.out.println("Bob   [Q]: Recv " + recv.getPolarization());
 
-	classicalChannel.sendMessage(this, new Message(ClassicalMessageType.DEBUG, "Bob received " + recv.getPolarization() ));
+
+	basisPointer++;
+	if(basisPointer == nBits) {
+	    System.out.println("Bob's received bits: " + this.rawKey.toString());
+	    basisPointer = 0;
+	}
+
 
 	return qb;
     }
+
+
+
+    public void printFinalKey(){
+	System.out.println("Bob's final key:");
+	System.out.println(rawKey);
+	System.out.println();
+    }
+
 
     @Override public PolarizationQubit sendQubit(final PolarizationQubit qb) {
 	return null;
     }
 
-    private void selectBases(){
-        FilterSetting randSett;
-	for (int i = 0; i < this.n_bits; i++) {
-	    randSett = FilterSetting.values()[rand.nextInt(FilterSetting.values().length)];
-	    basis[i] = randSett;
-	}
-	System.out.println("Bob: Allocated bases");
-	printBases();
-    }
-
-    private void printBases(){
-	System.out.println("Bob: Basis selection ");
-	for (int i = 0; i <n_bits ; i++) {
-	    System.out.print(basis[i] + " ");
-	}
-	System.out.println(System.lineSeparator());
-    }
-
-
     @Override public void receiveClassical(final Message m) {
-	System.out.println("Bob   [C]: " + m);
+	switch(m.getMessageType()){
+	    case SIFT_REVEAL_BASIS_CHOICE:
+	        FilterSetting fs = FilterSetting.valueOf(m.getMessage());
+	        if (basisSelection[basisPointer] != fs){
+		    // Discard the bit. Basis choices do not agree
+	            rawKey.remove(basisPointer);
+	            basisPointer++;
+		    classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_DECIDE_REMOVE, null));
+		}else{
+	            // Keep the bit. Basis choices agree
+		    basisPointer++;
+		    classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_DECIDE_KEEP, null));
+
+		}
+
+
+	}
+        System.out.println("Bob   [C]: " + m);
     }
 
     @Override public void sendClassical(final Message m) {

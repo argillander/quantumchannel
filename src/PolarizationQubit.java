@@ -2,7 +2,7 @@ import java.util.Random;
 
 public class PolarizationQubit extends Qubit
 {
-    static Random rand;
+    static Random rand = new Random();
 
     private Polarization polarization = Polarization.UNSET;
 
@@ -20,8 +20,9 @@ public class PolarizationQubit extends Qubit
 
     public PolarizationQubit() {
 	// Initialize with random polarization
+
         Polarization p;
-        p = Polarization.values()[rand.nextInt(Polarization.values().length -1)];
+        p = Polarization.values()[rand.nextInt(Polarization.values().length)];
 
 
     }

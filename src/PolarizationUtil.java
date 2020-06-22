@@ -11,4 +11,14 @@ public class PolarizationUtil
     static FilterSetting getRandomBasis(){
 	return FilterSetting.values()[r.nextInt(FilterSetting.values().length)];
     }
+
+    static FilterSetting[] getRandomBasisSelection(int n){
+        FilterSetting[] basis = new FilterSetting[n];
+
+        for (int i = 0; i < n; i++) {
+            basis[i] = getRandomBasis();
+        }
+        return basis;
+    }
+
 }

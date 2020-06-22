@@ -22,4 +22,22 @@ public class EncodingScheme
 	}
 	return qb;
     }
+
+    static int decodeQubit(PolarizationQubit qb){
+        switch(qb.getPolarization()){
+	    case H:
+	        return 0;
+	    case V:
+	        return 1;
+	    case P:
+	        return 0;
+	    case M:
+	        return 1;
+	    default:
+	        return -1;
+	}
+
+    }
+
+
 }
