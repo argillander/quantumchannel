@@ -1,7 +1,7 @@
 public class Main
 {
     public static void main(String[] args) {
-        int N_BITS = 3;
+        int N_BITS = 20;
 
 
         System.out.println("Started QSim");
@@ -14,12 +14,18 @@ public class Main
         cCh.addRecipient(b);
         cCh.addRecipient(a);
 
-        a.sendClassical(new Message(ClassicalMessageType.DEBUG, "Hello Bob!"));
-        b.sendClassical(new Message(ClassicalMessageType.DEBUG, "Hello Alice!"));
+        a.sendClassical(new Message(ClassicalMessageType.DEBUG, -1,"Hello Bob!"));
+        b.sendClassical(new Message(ClassicalMessageType.DEBUG, -1,"Hello Alice!"));
 
 
         a.doQubitExchange();
-        a.siftQubits();
+
+        a.printBasis();
+        b.printBasis();
+        a.printFinalKey();
+        b.printFinalKey();
+        a.communicateBasisChoices();
+        a.finalizeSift();
 
         a.printFinalKey();
         b.printFinalKey();

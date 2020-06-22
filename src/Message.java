@@ -2,10 +2,17 @@ public class Message
 {
     private ClassicalMessageType messageType;
     private String message;
+    private int bitIndex = 0;
 
-    public Message(final ClassicalMessageType messageType, final String message) {
+    public Message(final ClassicalMessageType messageType, final int bitIndex, final String message) {
 	this.messageType = messageType;
 	this.message = message;
+	this.bitIndex = bitIndex;
+    }
+
+
+    public int getBitIndex() {
+	return bitIndex;
     }
 
     public ClassicalMessageType getMessageType() {
@@ -25,6 +32,6 @@ public class Message
     }
 
     @Override public String toString() {
-	return  messageType + ": \"" + message + "\"";
+	return bitIndex + " "+  messageType  +  ": \"" + message + "\"";
     }
 }

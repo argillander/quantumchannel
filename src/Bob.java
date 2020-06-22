@@ -1,6 +1,7 @@
 import javax.sound.sampled.AudioFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 public class Bob implements QuantumChannelRecipient, ClassicalChannelRecipient
@@ -31,6 +32,7 @@ public class Bob implements QuantumChannelRecipient, ClassicalChannelRecipient
 	this.rawKey.add(EncodingScheme.decodeQubit(recv));
 
 	System.out.println("Bob   [Q]: Recv " + recv.getPolarization());
+	System.out.println();
 
 
 	basisPointer++;
@@ -50,6 +52,9 @@ public class Bob implements QuantumChannelRecipient, ClassicalChannelRecipient
 	System.out.println(rawKey);
 	System.out.println();
     }
+    public void printBasis(){
+	System.out.println("Bob's basis: " + Arrays.toString(basisSelection));
+    }
 
 
     @Override public PolarizationQubit sendQubit(final PolarizationQubit qb) {
@@ -57,22 +62,34 @@ public class Bob implements QuantumChannelRecipient, ClassicalChannelRecipient
     }
 
     @Override public void receiveClassical(final Message m) {
+	int bitIndex = m.getBitIndex();
+
 	switch(m.getMessageType()){
 	    case SIFT_REVEAL_BASIS_CHOICE:
 	        FilterSetting fs = FilterSetting.valueOf(m.getMessage());
-	        if (basisSelection[basisPointer] != fs){
+	        if (basisSelection[bitIndex] != fs){
+
+	            assert(rawKey.size() == nBits);
+
 		    // Discard the bit. Basis choices do not agree
-	            rawKey.remove(basisPointer);
-	            basisPointer++;
-		    classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_DECIDE_REMOVE, null));
+		    try {
+			rawKey.set(bitIndex, -2);
+		    }catch(Exception e){
+			System.out.println(rawKey);
+			System.out.println(fs);
+			System.out.println(bitIndex);
+			return;
+		    }
+	            //basisPointer++;
+		    classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_DECIDE_REMOVE,bitIndex, null));
 		}else{
 	            // Keep the bit. Basis choices agree
-		    basisPointer++;
-		    classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_DECIDE_KEEP, null));
-
+		    //basisPointer++;
+		    classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_DECIDE_KEEP, bitIndex,null));
 		}
-
-
+	    case SIFT_DONE:
+	        rawKey.removeAll(Collections.singleton(-2));
+	        classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_DONE, bitIndex,null));
 	}
         System.out.println("Bob   [C]: " + m);
     }

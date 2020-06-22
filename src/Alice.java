@@ -1,6 +1,7 @@
 import javax.sound.sampled.AudioFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipient
@@ -56,18 +57,26 @@ public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipien
             int dataBit = rawBits.get(i);
             FilterSetting basis = basisSelection[i];
             qb = EncodingScheme.encodeQubit(dataBit, basis);
+            System.out.println("Alice [Q]: Sent " + qb.getPolarization());
+
             sendQubit(qb);
         }
     }
 
 
-    void siftQubits(){
+    public void communicateBasisChoices(){
         for (int i = 0; i < nBits ; i++) {
-            classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_REVEAL_BASIS_CHOICE, basisSelection[i].toString()));
+            classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_REVEAL_BASIS_CHOICE,i, basisSelection[i].toString()));
         }
-
     }
 
+    public void finalizeSift(){
+        classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_DONE,0, null));
+
+    }
+    public void printBasis(){
+        System.out.println("Ali's basis: " + Arrays.toString(basisSelection));
+    }
 
     public void printFinalKey(){
         System.out.println("Alices's final key:");
@@ -76,14 +85,21 @@ public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipien
     }
 
     @Override public void receiveClassical(final Message m) {
+        int bitIndex = m.getBitIndex();
         switch(m.getMessageType()){
             case SIFT_DECIDE_KEEP:
-                basisPointer++;
+                //basisPointer++;
                 break;
             case SIFT_DECIDE_REMOVE:
-                rawBits.remove(basisPointer);
-                basisPointer++;
+                rawBits.set(bitIndex, -2);
+                //basisPointer++;
+                break;
+            case SIFT_DONE:
+                rawBits.removeAll(Collections.singleton(-2));
+                break;
+
         }
+
         System.out.println("Alice [C]: " + m);
 
     }
