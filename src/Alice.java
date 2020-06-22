@@ -1,20 +1,39 @@
-public class Alice
+public class Alice implements ChannelRecipient,  ClassicalChannelRecipient
 {
-    Channel ch;
-
+    QuantumChannel quantumChannel;
+    ClassicalChannel classicalChannel;
     int[] rawkey;
     int[] basisSelection;
     int n_bits;
 
-    public Alice(final int n_bits, final Channel ch) {
-	this.ch = ch;
+    public Alice(final int n_bits, final QuantumChannel quantumChannel, ClassicalChannel classicalChannel) {
+	this.quantumChannel = quantumChannel;
+	this.classicalChannel = classicalChannel;
+
     }
 
-    PolarizationQubit sendQubit(){
+    PolarizationQubit sendOneQubit(){
         PolarizationQubit qb = new PolarizationQubit(Polarization.V);
         System.out.println("Alice: " + qb.getPolarization());
 
-        ch.send(qb);
+        this.sendQubit(qb);
+
+        return qb;
+    }
+    @Override public void receiveClassical(final Message m) {
+        System.out.println("Alice [C]: " + m);
+    }
+    @Override public void sendClassical(final Message m) {
+        this.classicalChannel.sendMessage(this,m);
+    }
+
+    @Override public PolarizationQubit receiveQubit(final PolarizationQubit qb) {
+        System.out.println("Alice [Q]: " + qb);
+        return qb;
+    }
+
+    @Override public PolarizationQubit sendQubit(final PolarizationQubit qb) {
+        this.quantumChannel.send(qb);
         return qb;
     }
 }

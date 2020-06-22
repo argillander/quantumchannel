@@ -1,15 +1,17 @@
 import java.util.Random;
 
-public class Bob implements ChannelRecipient
+public class Bob implements ChannelRecipient, ClassicalChannelRecipient
 {
 
     FilterSetting[] basis; // = {FilterSetting.HV, FilterSetting.PM, FilterSetting.PM, FilterSetting.HV, FilterSetting.PM };
     int basisPointer = 0;
     Random rand;
     int n_bits = 0;
+    ClassicalChannel classicalChannel;
 
-    public Bob(final int n_bits) {
+    public Bob(final int n_bits, final ClassicalChannel classicalChannel) {
 	this.n_bits = n_bits;
+	this.classicalChannel = classicalChannel;
 	this.rand = new Random();
 	basis = new FilterSetting[n_bits];
 	selectBases();
@@ -23,6 +25,10 @@ public class Bob implements ChannelRecipient
         recv = pf.filterQubit(qb);
 	System.out.println("Bob:   " + recv.getPolarization() + System.lineSeparator());
 	return qb;
+    }
+
+    @Override public PolarizationQubit sendQubit(final PolarizationQubit qb) {
+	return null;
     }
 
     private void selectBases(){
@@ -44,4 +50,11 @@ public class Bob implements ChannelRecipient
     }
 
 
+    @Override public void receiveClassical(final Message m) {
+	System.out.println("Bob [C]: " + m);
+    }
+
+    @Override public void sendClassical(final Message m) {
+	this.classicalChannel.sendMessage(this,m);
+    }
 }

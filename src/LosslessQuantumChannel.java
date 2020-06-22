@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class LosslessQuantumChannel implements Channel
+public class LosslessQuantumChannel implements QuantumChannel
 {
     ArrayList<ChannelRecipient> recipients = null;
 
