@@ -1,25 +1,80 @@
+import java.util.Arrays;
+import java.util.Random;
+
 public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipient
 {
+    Random rand;
     QuantumChannel quantumChannel;
     ClassicalChannel classicalChannel;
-    int[] rawkey;
-    int[] basisSelection;
-    int n_bits;
+    int[] rawBits;
+    FilterSetting[] basisSelection;
+    int nBits;
 
-    public Alice(final int n_bits, final QuantumChannel quantumChannel, ClassicalChannel classicalChannel) {
+    public Alice(final int nBits, final QuantumChannel quantumChannel, ClassicalChannel classicalChannel) {
 	this.quantumChannel = quantumChannel;
 	this.classicalChannel = classicalChannel;
+        this.rand = new Random();
+        this.nBits = nBits;
 
+        this.basisSelection = new FilterSetting[nBits];
+        this.rawBits = new int[nBits];
+        randomizeBasisSelection();
+        randomizeRawBits();
     }
 
-    PolarizationQubit sendOneQubit(){
+    private PolarizationQubit sendOneQubit(){
         PolarizationQubit qb = new PolarizationQubit(Polarization.V);
         System.out.println("Alice [Q]: Sent " + qb.getPolarization());
 
         this.sendQubit(qb);
-
         return qb;
     }
+
+    private void randomizeRawBits(){
+        int b;
+        for (int i = 0; i < nBits; i++) {
+            b = rand.nextInt(1+1);
+            rawBits[i] = b;
+        }
+        System.out.println("Alice's raw bits");
+        System.out.println(Arrays.toString(rawBits));
+    }
+
+    private void randomizeBasisSelection(){
+        System.out.println("Randomizing Alice's basis. n=" + nBits);
+        FilterSetting fs;
+        for (int i = 0; i < nBits; i++) {
+            fs = PolarizationUtil.getRandomBasis();
+            this.basisSelection[i] = fs;
+            System.out.println(fs);
+        }
+        System.out.println("Alice's basis");
+        System.out.println(Arrays.toString(this.basisSelection));
+    }
+
+
+    public void doQubitExchange(){
+        for (int i = 0; i < nBits; i++) {
+            PolarizationQubit qb = new PolarizationQubit();
+
+        }
+    }
+
+
+    public void sendQubits(){
+
+        for (int i = 0; i < nBits; i++) {
+
+        }
+    }
+
+
+
+    void siftQubits(){
+
+    }
+
+
     @Override public void receiveClassical(final Message m) {
         System.out.println("Alice [C]: " + m);
     }
@@ -36,4 +91,6 @@ public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipien
         this.quantumChannel.send(this, qb);
         return qb;
     }
+
+
 }

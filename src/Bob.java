@@ -25,7 +25,10 @@ public class Bob implements QuantumChannelRecipient, ClassicalChannelRecipient
         basisPointer++;
 
         recv = pf.filterQubit(qb);
-	System.out.println("Bob   [Q]: Recv " + recv.getPolarization() + System.lineSeparator());
+	System.out.println("Bob   [Q]: Recv " + recv.getPolarization());
+
+	classicalChannel.sendMessage(this, new Message(ClassicalMessageType.DEBUG, "Bob received " + recv.getPolarization() ));
+
 	return qb;
     }
 

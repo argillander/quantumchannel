@@ -1,7 +1,7 @@
 public class Main
 {
     public static void main(String[] args) {
-        int N_BITS = 5;
+        int N_BITS = 3;
 
 
         System.out.println("Started QSim");
@@ -17,9 +17,9 @@ public class Main
         a.sendClassical(new Message(ClassicalMessageType.DEBUG, "Hello Bob!"));
         b.sendClassical(new Message(ClassicalMessageType.DEBUG, "Hello Alice!"));
 
-        for (int i = 0; i < 5; i++) {
-          a.sendOneQubit();
-        }
+        //for (int i = 0; i < 5; i++) {
+          //a.sendOneQubit();
+       // }
     }
 
 
