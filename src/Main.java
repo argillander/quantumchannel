@@ -7,19 +7,19 @@ public class Main
         System.out.println("Started QSim");
         LosslessQuantumChannel qCh = new LosslessQuantumChannel();
         ClassicalChannel cCh = new ClassicalChannel();
-        Bob b = new Bob(N_BITS, cCh);
-        qCh.addRecipient(b);
+        Bob b = new Bob(N_BITS, qCh, cCh);
         Alice a = new Alice(N_BITS, qCh, cCh);
+        qCh.addRecipient(b);
+        qCh.addRecipient(a);
         cCh.addRecipient(b);
         cCh.addRecipient(a);
 
         a.sendClassical(new Message(ClassicalMessageType.DEBUG, "Hello Bob!"));
         b.sendClassical(new Message(ClassicalMessageType.DEBUG, "Hello Alice!"));
-    /*
+
         for (int i = 0; i < 5; i++) {
-          a.sendQubit();
+          a.sendOneQubit();
         }
-*/
     }
 
 

@@ -29,6 +29,7 @@ public class PolarizationFilter
     }
 
     PolarizationQubit filterQubit(PolarizationQubit qb) {
+	System.out.println("Measuring qubit " + qb.getPolarization() + " with setting " + this.s);
 	if (s == FilterSetting.HV && (qb.getPolarization() == Polarization.H || qb.getPolarization() == Polarization.V)) {
 	    // Correct basis, return qubit as-is
 	    return qb;

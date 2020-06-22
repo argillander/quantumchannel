@@ -1,4 +1,4 @@
-public interface ChannelRecipient
+public interface QuantumChannelRecipient
 {
     PolarizationQubit receiveQubit(PolarizationQubit qb);
 

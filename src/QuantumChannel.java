@@ -2,9 +2,9 @@ import java.util.ArrayList;
 
 public interface QuantumChannel
 {
-    ArrayList<ChannelRecipient> recipients = null;
-    PolarizationQubit send(PolarizationQubit qb);
+    ArrayList<QuantumChannelRecipient> recipients = null;
+    PolarizationQubit send(QuantumChannelRecipient sender, PolarizationQubit qb);
 
-    void addRecipient(ChannelRecipient p);
+    void addRecipient(QuantumChannelRecipient p);
 
 }

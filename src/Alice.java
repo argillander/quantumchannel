@@ -1,4 +1,4 @@
-public class Alice implements ChannelRecipient,  ClassicalChannelRecipient
+public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipient
 {
     QuantumChannel quantumChannel;
     ClassicalChannel classicalChannel;
@@ -14,7 +14,7 @@ public class Alice implements ChannelRecipient,  ClassicalChannelRecipient
 
     PolarizationQubit sendOneQubit(){
         PolarizationQubit qb = new PolarizationQubit(Polarization.V);
-        System.out.println("Alice: " + qb.getPolarization());
+        System.out.println("Alice [Q]: Sent " + qb.getPolarization());
 
         this.sendQubit(qb);
 
@@ -33,7 +33,7 @@ public class Alice implements ChannelRecipient,  ClassicalChannelRecipient
     }
 
     @Override public PolarizationQubit sendQubit(final PolarizationQubit qb) {
-        this.quantumChannel.send(qb);
+        this.quantumChannel.send(this, qb);
         return qb;
     }
 }
