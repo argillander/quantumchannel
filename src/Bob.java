@@ -1,4 +1,3 @@
-import javax.sound.sampled.AudioFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,7 +24,7 @@ public class Bob implements QuantumChannelRecipient, ClassicalChannelRecipient
 	this.rawKey = new ArrayList<>();
     }
 
-    @Override public PolarizationQubit receiveQubit(final PolarizationQubit qb) {
+     public PolarizationQubit receiveQubit(final PolarizationQubit qb) {
         PolarizationQubit recv;
         PolarizationFilter pf = new PolarizationFilter(basisSelection[basisPointer]);
 	recv = pf.filterQubit(qb);
@@ -57,11 +56,11 @@ public class Bob implements QuantumChannelRecipient, ClassicalChannelRecipient
     }
 
 
-    @Override public PolarizationQubit sendQubit(final PolarizationQubit qb) {
+    public PolarizationQubit sendQubit(final PolarizationQubit qb) {
 	return null;
     }
 
-    @Override public void receiveClassical(final Message m) {
+    public void receiveClassical(final Message m) {
 	int bitIndex = m.getBitIndex();
 
 	switch(m.getMessageType()){
@@ -94,7 +93,18 @@ public class Bob implements QuantumChannelRecipient, ClassicalChannelRecipient
         System.out.println("Bob   [C]: " + m);
     }
 
-    @Override public void sendClassical(final Message m) {
+    public void sendClassical(final Message m) {
 	this.classicalChannel.sendMessage(this, m);
+    }
+
+    public void start() {
+        Thread t = new Thread(){
+	    @Override public void run() {
+		while(true){
+
+		}
+	    }
+	};
+        t.start();
     }
 }

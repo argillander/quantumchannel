@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public class PolarizationQubit extends Qubit
+public class PolarizationQubit extends Qubit implements Transmittable
 {
     static Random rand = new Random();
 

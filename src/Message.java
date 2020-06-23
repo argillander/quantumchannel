@@ -1,4 +1,4 @@
-public class Message
+public class Message implements Transmittable
 {
     private ClassicalMessageType messageType;
     private String message;

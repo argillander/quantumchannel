@@ -1,4 +1,4 @@
-public abstract class Qubit
+public abstract class Qubit implements Transmittable
 {
     String value = "";
 

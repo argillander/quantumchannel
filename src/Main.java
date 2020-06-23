@@ -1,13 +1,15 @@
 public class Main
 {
     public static void main(String[] args) {
-        int N_BITS = 20;
+        int N_BITS = 2;
 
 
         System.out.println("Started QSim");
         LosslessQuantumChannel qCh = new LosslessQuantumChannel();
         ClassicalChannel cCh = new ClassicalChannel();
         Bob b = new Bob(N_BITS, qCh, cCh);
+        b.start();
+
         Alice a = new Alice(N_BITS, qCh, cCh);
         qCh.addRecipient(b);
         qCh.addRecipient(a);

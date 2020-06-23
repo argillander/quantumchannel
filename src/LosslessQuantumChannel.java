@@ -1,14 +1,17 @@
+import java.net.Socket;
 import java.util.ArrayList;
 
-public class LosslessQuantumChannel implements QuantumChannel
+public class LosslessQuantumChannel extends QuantumChannel
 {
     ArrayList<QuantumChannelRecipient> recipients = null;
 
     public LosslessQuantumChannel() {
         this.recipients = new ArrayList<>();
+        Socket sock = new Socket();
+
     }
 
-    @Override public PolarizationQubit send(final QuantumChannelRecipient sender, final PolarizationQubit qb) {
+     public PolarizationQubit send(final QuantumChannelRecipient sender, final PolarizationQubit qb) {
         for (QuantumChannelRecipient cr : this.recipients){
             if(!cr.equals(sender)) {
                 //Prevent echoing of qubits
@@ -18,7 +21,8 @@ public class LosslessQuantumChannel implements QuantumChannel
         return qb;
     }
 
-    @Override public void addRecipient(final QuantumChannelRecipient p) {
+     public void addRecipient(final QuantumChannelRecipient p) {
 	this.recipients.add(p);
     }
+
 }

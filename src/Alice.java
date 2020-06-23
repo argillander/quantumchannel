@@ -1,10 +1,9 @@
-import javax.sound.sampled.AudioFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
-public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipient
+public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipient, ChannelRecipient
 {
     Random rand;
     QuantumChannel quantumChannel;
@@ -84,7 +83,7 @@ public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipien
         System.out.println();
     }
 
-    @Override public void receiveClassical(final Message m) {
+     public void receiveClassical(final Message m) {
         int bitIndex = m.getBitIndex();
         switch(m.getMessageType()){
             case SIFT_DECIDE_KEEP:
@@ -103,20 +102,23 @@ public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipien
         System.out.println("Alice [C]: " + m);
 
     }
-    @Override public void sendClassical(final Message m) {
+     public void sendClassical(final Message m) {
         this.classicalChannel.sendMessage(this,m);
     }
 
-    @Override public PolarizationQubit receiveQubit(final PolarizationQubit qb) {
+     public PolarizationQubit receiveQubit(final PolarizationQubit qb) {
         System.out.println("Alice [Q]: " + qb);
         return qb;
     }
 
-    @Override public PolarizationQubit sendQubit(final PolarizationQubit qb) {
+     public PolarizationQubit sendQubit(final PolarizationQubit qb) {
 //        System.out.println("Alice [Q]: Sent " + qb.getPolarization());
         this.quantumChannel.send(this, qb);
         return qb;
     }
 
 
+    @Override public void receive(final Message m) {
+        System.out.println("Alice got msg: " + m);
+    }
 }
