@@ -1,25 +1,19 @@
 import java.util.ArrayList;
 
-public class ClassicalChannel
+public class ClassicalChannel extends Channel
 {
-    ArrayList<ClassicalChannelRecipient> recipients;
 
-    public ClassicalChannel() {
-        this.recipients = new ArrayList<>();
+
+
+    public ClassicalChannel(ChannelRecipient r, int inport, int targetport) {
+        super(r, inport, targetport, Message.class);
     }
 
-    void sendMessage(ClassicalChannelRecipient sender, Message m){
-        for (ClassicalChannelRecipient r : recipients){
-            if(!r.equals(sender)){
-                // Ignore ourselves to prevent message from echoing.
-                r.receiveClassical(m);
-	    }
-	}
+
+    public void sendMessage(Message m){
+        super.send(m);
     }
 
-    void addRecipient(ClassicalChannelRecipient rec){
-        recipients.add(rec);
-    }
 
 
 }

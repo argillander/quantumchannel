@@ -15,16 +15,23 @@ public class Bob implements QuantumChannelRecipient, ClassicalChannelRecipient
 
     ArrayList<Integer> rawKey;
 
-    public Bob(final int nBits, final QuantumChannel quantumChannel, final ClassicalChannel classicalChannel) {
+    public Bob(final int nBits, final QuantumChannel quantumChannel) {
 	this.nBits = nBits;
-	this.classicalChannel = classicalChannel;
 	this.quantumChannel = quantumChannel;
 	this.rand = new Random();
 	this.basisSelection = PolarizationUtil.getRandomBasisSelection(nBits);
 	this.rawKey = new ArrayList<>();
     }
 
-     public PolarizationQubit receiveQubit(final PolarizationQubit qb) {
+    public void setClassicalChannel(final ClassicalChannel classicalChannel) {
+	this.classicalChannel = classicalChannel;
+    }
+
+    public void setQuantumChannel(final QuantumChannel quantumChannel) {
+	this.quantumChannel = quantumChannel;
+    }
+
+    public PolarizationQubit receiveQubit(final PolarizationQubit qb) {
         PolarizationQubit recv;
         PolarizationFilter pf = new PolarizationFilter(basisSelection[basisPointer]);
 	recv = pf.filterQubit(qb);
@@ -80,21 +87,21 @@ public class Bob implements QuantumChannelRecipient, ClassicalChannelRecipient
 			return;
 		    }
 	            //basisPointer++;
-		    classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_DECIDE_REMOVE,bitIndex, null));
+		    classicalChannel.sendMessage(new Message(ClassicalMessageType.SIFT_DECIDE_REMOVE,bitIndex, null));
 		}else{
 	            // Keep the bit. Basis choices agree
 		    //basisPointer++;
-		    classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_DECIDE_KEEP, bitIndex,null));
+		    classicalChannel.sendMessage(new Message(ClassicalMessageType.SIFT_DECIDE_KEEP, bitIndex,null));
 		}
 	    case SIFT_DONE:
 	        rawKey.removeAll(Collections.singleton(-2));
-	        classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_DONE, bitIndex,null));
+	        classicalChannel.sendMessage(new Message(ClassicalMessageType.SIFT_DONE, bitIndex,null));
 	}
         System.out.println("Bob   [C]: " + m);
     }
 
     public void sendClassical(final Message m) {
-	this.classicalChannel.sendMessage(this, m);
+	this.classicalChannel.sendMessage(m);
     }
 
     public void start() {
@@ -106,5 +113,10 @@ public class Bob implements QuantumChannelRecipient, ClassicalChannelRecipient
 	    }
 	};
         t.start();
+    }
+
+
+    @Override public void receive(final Transmittable m) {
+	System.out.println("BOB RECIEVE: " + m);
     }
 }

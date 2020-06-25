@@ -1,5 +1,5 @@
 public interface ChannelRecipient
 {
 
-    void receive(Message m);
+    void receive(Transmittable m);
 }

@@ -67,7 +67,8 @@ public class Channel
 		}
 
 		Transmittable m =  jsonStringToTransmittable(new String(buf));
-		System.out.println(m);
+
+		recipient.receive(m);
 	    }
 
 	}).start();

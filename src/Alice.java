@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 
-public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipient, ChannelRecipient
+public class Alice implements QuantumChannelRecipient, ClassicalChannelRecipient, ChannelRecipient
 {
     Random rand;
     QuantumChannel quantumChannel;
@@ -13,7 +13,7 @@ public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipien
     int nBits;
     int basisPointer;
 
-    public Alice(final int nBits, final QuantumChannel quantumChannel, ClassicalChannel classicalChannel) {
+    public Alice(final int nBits, final QuantumChannel quantumChannel) {
 	this.quantumChannel = quantumChannel;
 	this.classicalChannel = classicalChannel;
         this.rand = new Random();
@@ -23,6 +23,14 @@ public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipien
         this.rawBits = new ArrayList<Integer>();
         randomizeBasisSelection();
         randomizeRawBits();
+    }
+
+    public void setQuantumChannel(final QuantumChannel quantumChannel) {
+        this.quantumChannel = quantumChannel;
+    }
+
+    public void setClassicalChannel(final ClassicalChannel classicalChannel) {
+        this.classicalChannel = classicalChannel;
     }
 
     private PolarizationQubit sendOneQubit(){
@@ -65,12 +73,12 @@ public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipien
 
     public void communicateBasisChoices(){
         for (int i = 0; i < nBits ; i++) {
-            classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_REVEAL_BASIS_CHOICE,i, basisSelection[i].toString()));
+            classicalChannel.sendMessage(new Message(ClassicalMessageType.SIFT_REVEAL_BASIS_CHOICE,i, basisSelection[i].toString()));
         }
     }
 
     public void finalizeSift(){
-        classicalChannel.sendMessage(this, new Message(ClassicalMessageType.SIFT_DONE,0, null));
+        classicalChannel.sendMessage(new Message(ClassicalMessageType.SIFT_DONE,0, null));
 
     }
     public void printBasis(){
@@ -103,7 +111,7 @@ public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipien
 
     }
      public void sendClassical(final Message m) {
-        this.classicalChannel.sendMessage(this,m);
+        this.classicalChannel.sendMessage(m);
     }
 
      public PolarizationQubit receiveQubit(final PolarizationQubit qb) {
@@ -118,7 +126,10 @@ public class Alice implements QuantumChannelRecipient,  ClassicalChannelRecipien
     }
 
 
-    @Override public void receive(final Message m) {
+    @Override public void receive(final Transmittable m) {
         System.out.println("Alice got msg: " + m);
     }
+
+
 }
+

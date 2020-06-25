@@ -1,4 +1,4 @@
-public interface ClassicalChannelRecipient
+public interface ClassicalChannelRecipient extends ChannelRecipient
 {
     void receiveClassical(Message m);
 
